@@ -1,0 +1,12 @@
+{
+  "name": "webapp-biblioteca-tests",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Pruebas con Jest para la API Biblioteca y el socket TCP",
+  "scripts": {
+    "test": "jest --runInBand"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}

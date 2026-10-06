@@ -1,0 +1,71 @@
+name: CI/CD - Build, Test y Publicar Imagen
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "app.py"
+      - "socket_server.py"
+      - "requirements.txt"
+      - "Dockerfile"
+      - "package.json"
+      - "package-lock.json"
+      - "tests/**"
+      - ".github/workflows/ci-cd.yml"
+  workflow_dispatch: {}
+
+jobs:
+  build-test-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar el codigo
+        uses: actions/checkout@v4
+
+      - name: Construir la imagen
+        run: docker build -t webapp:ci .
+
+      - name: Levantar el contenedor para pruebas
+        run: docker run -d -p 8080:80 -p 6061:6061 --name webapp-ci webapp:ci
+
+      - name: Esperar a que el servicio responda
+        run: |
+          for i in $(seq 1 15); do
+            curl -sf http://localhost:8080/ && exit 0
+            sleep 2
+          done
+          echo "El servicio nunca respondio" >&2
+          exit 1
+
+      - name: Preparar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Instalar dependencias de Jest
+        run: npm ci
+
+      - name: Correr pruebas con Jest (HTTP + socket TCP)
+        run: npx jest --runInBand
+
+      - name: Logs del contenedor (por si algo falla)
+        if: failure()
+        run: docker logs webapp-ci
+
+      - name: Apagar el contenedor de pruebas
+        if: always()
+        run: docker rm -f webapp-ci
+
+      - name: Iniciar sesion en Docker Hub
+        if: success()
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Etiquetar y publicar en Docker Hub
+        if: success()
+        run: |
+          docker tag webapp:ci ${{ secrets.DOCKERHUB_USERNAME }}/webapp:latest
+          docker tag webapp:ci ${{ secrets.DOCKERHUB_USERNAME }}/webapp:${{ github.sha }}
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/webapp:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/webapp:${{ github.sha }}

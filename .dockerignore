@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+data/
+backups/
+tests/
+evidencias/
+README.md
+.git
+node_modules/
+.env
+logs/

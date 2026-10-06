@@ -1,0 +1,169 @@
+### Cambia localhost por la IP publica de tu EC2 (http://IP_EC2:8080) para la Parte 5
+@host = http://localhost:8080
+
+# ============================================================
+# Los 10 endpoints de la practica. Cada uno trae sus 3 escenarios:
+#   [exito]     -> datos validos, camino feliz
+#   [invalido]  -> datos faltantes o mal formados
+#   [no-existe] -> id que no existe, formato de id invalido, o conflicto
+# Los mismos 30 casos se prueban automaticamente con Jest (npm test).
+# ============================================================
+
+
+# ---------- 1. GET /api/autores ----------
+
+### 1a. [exito] listar autores
+GET {{host}}/api/autores
+
+
+# ---------- 2. POST /api/autores ----------
+
+### 2a. [exito] crear autor
+POST {{host}}/api/autores
+Content-Type: application/json
+
+{ "nombre": "Gabriel Garcia Marquez", "nacionalidad": "Colombia" }
+
+### 2b. [invalido] falta el campo obligatorio "nombre"
+POST {{host}}/api/autores
+Content-Type: application/json
+
+{ "nacionalidad": "Peru" }
+
+### 2c. [invalido] el cuerpo no es JSON valido
+POST {{host}}/api/autores
+Content-Type: application/json
+
+esto no es json
+
+
+# ---------- 3. PUT /api/autores/:id ----------
+
+### 3a. [exito] actualizar autor (cambia el 1 por un id real)
+PUT {{host}}/api/autores/1
+Content-Type: application/json
+
+{ "nombre": "Gabriel Garcia Marquez", "nacionalidad": "Mexico" }
+
+### 3b. [no-existe] id que no existe
+PUT {{host}}/api/autores/99999
+Content-Type: application/json
+
+{ "nombre": "Nadie" }
+
+### 3c. [no-existe] id con formato invalido
+PUT {{host}}/api/autores/abc
+Content-Type: application/json
+
+{ "nombre": "Nadie" }
+
+
+# ---------- 4. DELETE /api/autores/:id ----------
+
+### 4a. [exito] borrar autor (cambia el 1 por un id real, sin libros)
+DELETE {{host}}/api/autores/1
+
+### 4b. [no-existe] id que no existe
+DELETE {{host}}/api/autores/99999
+
+### 4c. [no-existe] conflicto: autor con libros asociados (usa un id que SI tenga libros)
+DELETE {{host}}/api/autores/1
+
+
+# ---------- 5. GET /api/categorias ----------
+
+### 5a. [exito] listar categorias
+GET {{host}}/api/categorias
+
+
+# ---------- 6. POST /api/categorias ----------
+
+### 6a. [exito] crear categoria
+POST {{host}}/api/categorias
+Content-Type: application/json
+
+{ "nombre": "Novela" }
+
+### 6b. [invalido] falta el campo obligatorio "nombre"
+POST {{host}}/api/categorias
+Content-Type: application/json
+
+{ }
+
+### 6c. [no-existe] categoria duplicada (conflicto)
+POST {{host}}/api/categorias
+Content-Type: application/json
+
+{ "nombre": "Novela" }
+
+
+# ---------- 7. GET /api/libros ----------
+
+### 7a. [exito] listar libros (con JOIN de autor y categoria)
+GET {{host}}/api/libros
+
+
+# ---------- 8. POST /api/libros ----------
+
+### 8a. [exito] crear libro
+POST {{host}}/api/libros
+Content-Type: application/json
+
+{ "titulo": "Cien anios de soledad", "anio": 1967, "autor_id": 1, "categoria_id": 1 }
+
+### 8b. [invalido] falta el campo obligatorio "titulo"
+POST {{host}}/api/libros
+Content-Type: application/json
+
+{ "autor_id": 1, "categoria_id": 1 }
+
+### 8c. [no-existe] autor_id / categoria_id no existen (llave foranea)
+POST {{host}}/api/libros
+Content-Type: application/json
+
+{ "titulo": "Libro fantasma", "autor_id": 999999, "categoria_id": 999999 }
+
+
+# ---------- 9. PUT /api/libros/:id ----------
+
+### 9a. [exito] actualizar libro (cambia el 1 por un id real)
+PUT {{host}}/api/libros/1
+Content-Type: application/json
+
+{ "titulo": "Cien anios de soledad (edicion revisada)", "anio": 1967, "autor_id": 1, "categoria_id": 1 }
+
+### 9b. [no-existe] id que no existe
+PUT {{host}}/api/libros/99999
+Content-Type: application/json
+
+{ "titulo": "X", "autor_id": 1, "categoria_id": 1 }
+
+### 9c. [invalido] autor_id invalido al actualizar (llave foranea)
+PUT {{host}}/api/libros/1
+Content-Type: application/json
+
+{ "titulo": "X", "autor_id": 999999, "categoria_id": 1 }
+
+
+# ---------- 10. DELETE /api/libros/:id ----------
+
+### 10a. [exito] borrar libro (cambia el 1 por un id real)
+DELETE {{host}}/api/libros/1
+
+### 10b. [no-existe] id que no existe
+DELETE {{host}}/api/libros/9999
+
+### 10c. [no-existe] id con formato invalido
+DELETE {{host}}/api/libros/abc
+
+
+# ============================================================
+# Extra, fuera de los 10 (no forman parte de esta practica, pero
+# siguen existiendo en la API para la practica anterior):
+# ============================================================
+
+### Extra. POST backup de la BD
+POST {{host}}/api/db/backup
+
+### Extra. DELETE vaciar la BD
+DELETE {{host}}/api/db/vaciar

@@ -1,0 +1,27 @@
+__pycache__/
+*.pyc
+data/
+backups/
+workspace/
+node_modules/
+
+# LaTeX build artifacts
+*.aux
+*.log
+*.out
+*.toc
+
+# Reportes LaTeX y evidencias (se entregan en clase, no van al repo publico)
+reporte/
+reporte-mejora/
+reporte-jest/
+evidencias/
+*.pdf
+
+# Notas personales del proyecto
+PENDIENTE_PROYECTO_INTEGRADOR.md
+
+# Dependencias y secretos locales
+node_modules/
+.env
+logs/
