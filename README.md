@@ -19,7 +19,8 @@ git push a main
 | `app.py` | API Flask con 12 endpoints y SQLite |
 | `socket_server.py` | Servidor TCP en el puerto 6061 (protocolo `{insert:...}` y `{get:...}`) |
 | `Dockerfile` | Imagen con Flask (gunicorn) y el socket |
-| `.github/workflows/ci-cd.yml` | Pipeline de GitHub Actions |
+| `.github/workflows/main.yml` | Pipeline de GitHub Actions |
+| `tests/test_api.py`, `tests/test_socket_tcp.py` | Pruebas pytest de la API y del socket (cobertura minima 70%) |
 | `tests/api.test.js` | Pruebas Jest: 10 endpoints x 3 escenarios |
 | `tests/socket.test.js` | Pruebas Jest del socket TCP |
 | `endpoints.http` | Pruebas manuales con la extensión REST Client de VS Code |
@@ -35,6 +36,9 @@ docker run -d -p 8080:80 -p 6061:6061 --name webapp-container webapp:latest
 
 npm ci
 BASE_URL=http://localhost:8080 SOCKET_PORT=6061 npm test
+
+pip install -r requirements-dev.txt
+python -m pytest --cov=app --cov=socket_server --cov-report=term-missing --cov-fail-under=70
 ```
 
 Para detener y borrar el contenedor: `docker rm -f webapp-container`.
@@ -69,5 +73,6 @@ BASE_URL=http://IP_EC2 npm test
 | API con 12 endpoints y pruebas Jest (10 endpoints x 3 escenarios) | Hecho |
 | Dockerfile y pruebas del socket | Hecho |
 | Pipeline: pruebas, build y publicación en Docker Hub | Hecho |
-| Cobertura de código con pytest-cov (mínimo 70%) | Pendiente |
+| Cobertura de código con pytest-cov (mínimo 70%, actual 96%) | Hecho |
+| Pipeline en pull requests y push, con cobertura en los logs | Hecho |
 | Deploy por SSH en el puerto 80 | Pendiente |

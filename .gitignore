@@ -25,3 +25,7 @@ PENDIENTE_PROYECTO_INTEGRADOR.md
 node_modules/
 .env
 logs/
+
+# Cobertura de pytest
+.coverage
+.pytest_cache/
