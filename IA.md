@@ -7,7 +7,6 @@ Este proyecto se desarrolló con ayuda de **Claude** (Anthropic), un asistente d
 - Resolver errores de código: por ejemplo, la prueba de Jest que fallaba por un id repetido, el bloqueo de llaves foráneas en SQLite y los errores de compilación de LaTeX.
 - Resolver errores de configuración: Docker Desktop, el Security Group de EC2, el workflow de GitHub Actions y los secretos del repositorio.
 - Explicar conceptos que yo no dominaba, como EC2, Docker Hub, SSH, pruebas con Jest y cobertura de código.
-- Redactar borradores de documentación técnica (este README y los reportes), que yo revisé y ajusté.
 
 ## Qué hice yo
 
