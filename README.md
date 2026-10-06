@@ -58,7 +58,7 @@ El repositorio no contiene IPs, llaves ni tokens. Estos valores se guardan en **
 
 1. Instancia Ubuntu Server (t3.micro) con Docker instalado.
 2. Security Group: TCP 22 (SSH) y TCP 80 (HTTP), desde `0.0.0.0/0`.
-3. Con el pipeline, el job de deploy descarga `:latest` y levanta el contenedor en el puerto 80.
+3. Con el pipeline, el job `deploy` (solo en push a `main`) descarga `:latest`, reemplaza el contenedor y comprueba que la API responda en el puerto 80.
 
 Para probar la API en la nube, cambia `localhost` por la IP pública en `endpoints.http`, o usa:
 
@@ -75,4 +75,4 @@ BASE_URL=http://IP_EC2 npm test
 | Pipeline: pruebas, build y publicación en Docker Hub | Hecho |
 | Cobertura de código con pytest-cov (mínimo 70%, actual 96%) | Hecho |
 | Pipeline en pull requests y push, con cobertura en los logs | Hecho |
-| Deploy por SSH en el puerto 80 | Pendiente |
+| Deploy por SSH en el puerto 80, verificado desde internet | Hecho |
