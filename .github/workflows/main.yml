@@ -97,3 +97,32 @@ jobs:
           docker tag webapp:ci ${{ secrets.DOCKERHUB_USERNAME }}/webapp:${{ github.sha }}
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/webapp:latest
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/webapp:${{ github.sha }}
+
+  deploy:
+    needs: build-test-push
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Desplegar en EC2 por SSH
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
+          IMAGEN: ${{ secrets.DOCKERHUB_USERNAME }}/webapp:latest
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "$EC2_SSH_KEY" > ~/.ssh/ec2.pem
+          chmod 600 ~/.ssh/ec2.pem
+          ssh-keyscan -H "$EC2_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+          ssh -i ~/.ssh/ec2.pem "ubuntu@$EC2_HOST" \
+            "docker pull $IMAGEN && (docker rm -f webapp-container || true) && docker run -d --restart unless-stopped --name webapp-container -p 80:80 -p 6061:6061 $IMAGEN"
+
+      - name: Esperar a que la API responda en el puerto 80
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+        run: |
+          for i in $(seq 1 15); do
+            curl -sf "http://$EC2_HOST/api/autores" && exit 0
+            sleep 3
+          done
+          echo "La API no respondio en el puerto 80" >&2
+          exit 1
