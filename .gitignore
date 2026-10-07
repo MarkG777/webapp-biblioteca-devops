@@ -29,3 +29,6 @@ logs/
 # Cobertura de pytest
 .coverage
 .pytest_cache/
+
+# Reporte del integrador (se entrega en clase)
+reporte-integrador/
