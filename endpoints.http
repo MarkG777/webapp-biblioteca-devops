@@ -1,5 +1,6 @@
-### Cambia localhost por la IP publica de tu EC2 (http://IP_EC2:8080) para la Parte 5
-@host = http://localhost:8080
+### El host sale de .env (ignorado por git). Crea un archivo .env en la raiz
+### del proyecto con una linea: HOST=http://IP_EC2  (sin puerto, usa el 80)
+@host = {{$dotenv HOST}}
 
 # ============================================================
 # Los 10 endpoints de la practica. Cada uno trae sus 3 escenarios:
