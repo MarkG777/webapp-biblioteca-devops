@@ -92,7 +92,7 @@ def index():
         "POST /api/db/backup",
         "DELETE /api/db/vaciar",
     ]
-    return respond(200, [{"servicio": "API Biblioteca", "mensaje": "Prueba la buena", "endpoints": endpoints}])
+    return respond(200, [{"servicio": "API Biblioteca", "mensaje": "Prueba la buena uteq 12", "endpoints": endpoints}])
 
 
 # ---------------------------- Autores ----------------------------
